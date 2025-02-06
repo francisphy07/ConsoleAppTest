@@ -1,0 +1,45 @@
+pipeline {
+    agent any
+    
+    environment {
+        DOTNET_VERSION = '8.0' // Change as per your requirement
+    }
+    
+    stages {
+        stage('Checkout') {
+            steps {
+                git 'https://github.com/francisphy07/ConsoleAppTest.git' // Replace with your repo URL
+            }
+        }
+        
+        stage('Setup .NET SDK') {
+            steps {
+                sh 'dotnet --version'
+            }
+        }
+        
+        stage('Restore Dependencies') {
+            steps {
+                sh 'dotnet restore'
+            }
+        }
+        
+        stage('Build') {
+            steps {
+                sh 'dotnet build --configuration Release'
+            }
+        }
+        
+        stage('Publish') {
+            steps {
+                sh 'dotnet publish -c Release -o output'
+            }
+        }
+        
+        stage('Archive Artifacts') {
+            steps {
+                archiveArtifacts artifacts: 'output/**', fingerprint: true
+            }
+        }
+    }
+}
